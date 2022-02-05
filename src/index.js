@@ -171,8 +171,6 @@ function roughen(flatObject) {
     let object = {};
 
     for (let [key, value] of Object.entries(flatObject)) {
-        let innerObject = {};
-
         const keys = key.split('.');
 
         keys.reduce((obj, i, currentIndex) => {
@@ -182,12 +180,14 @@ function roughen(flatObject) {
                 return;
             }
 
-            obj[i] = {};
+            if (!obj[i]) {
+                obj[i] = {};
+            } else {
+                obj[i] = { ...obj[i] };
+            }
 
             return obj[i];
-        }, innerObject);
-
-        object = { ...object, ...innerObject };
+        }, object);
     }
 
     return object;
@@ -200,18 +200,23 @@ function roughen(flatObject) {
  * @param {*} messages
  * @returns
  */
-function validator(form, args, messages = {}) {
-    // the validator object
-    let validator = {
+function validate(form, args, messages = {}) {
+    // the validate object
+    let object = {
         valid: true,
     };
 
     // flatten the objects
     form = flatten(form);
     args = flatten(args);
+    messages = flatten(messages);
 
     // add wildcard character where matching
     for (const [key, value] of Object.entries(args)) {
+        if (!value) {
+            continue;
+        }
+
         if (key.includes('*')) {
             const wildcard = { key, value };
 
@@ -227,13 +232,19 @@ function validator(form, args, messages = {}) {
                 wildcard.key.replace(/\./, '.');
 
                 if (RegExp(`^${wildcard.key}`).test(key)) {
-                    args[key] = `${wildcard.value}|${value}`;
+                    if (args[key]) {
+                        args[key] = `${wildcard.value}|${args[key]}`;
+                    } else {
+                        args[key] = wildcard.value;
+                    }
                 }
             }
 
             delete args[key];
         }
     }
+
+    console.log('args', args);
 
     // all objects
     for (let [key, ruleList] of Object.entries(args)) {
@@ -260,14 +271,14 @@ function validator(form, args, messages = {}) {
                 continue;
             }
 
-            // initialize validator for rule
-            if (!validator[key]) {
-                validator[key] = {};
+            // initialize object for rule
+            if (!object[key]) {
+                object[key] = {};
             }
 
             // add increment if multiple of same rule
             let increment = '';
-            while (typeof validator[key][`${rule}${increment}`] == 'boolean') {
+            while (typeof object[key][`${rule}${increment}`] == 'boolean') {
                 +increment++;
             }
 
@@ -283,25 +294,25 @@ function validator(form, args, messages = {}) {
             });
 
             // add "is valid" to the key
-            validator[key][`${rule}${increment}`] = isValid;
+            object[key][`${rule}${increment}`] = isValid;
 
             if (!isValid) {
-                // if any of the objects are invalid, so is the validator
-                validator.valid = false;
-
-                if (!messages) {
-                    continue;
-                }
+                // if any of the objects are invalid, so is the object
+                object.valid = false;
 
                 // add the first invalid message
-                if (!validator[key].message && messages[`${key}.${rule}${increment}`]) {
-                    validator[key].message = messages[`${key}.${rule}${increment}`];
+                if (messages[`${key}.${rule}${increment}`]) {
+                    if (!object[key].messages?.length) {
+                        object[key].messages = [];
+                    }
+
+                    object[key].messages = [...object[key].messages, messages[`${key}.${rule}${increment}`]];
                 }
             }
         }
     }
 
-    return roughen(validator);
+    return roughen(object);
 }
 
-export default validator;
+export default validate;
