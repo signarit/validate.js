@@ -69,6 +69,13 @@ function validate(form, args, messages = {}) {
     args = flatten(args);
     messages = flatten(messages);
 
+    // add non-existing objects to the form
+    for (const [key] of Object.entries(args)) {
+        if (!Object.keys(form).includes(key)) {
+            form[key] = '';
+        }
+    }
+
     // add wildcard character where matching
     for (const [key, value] of Object.entries(args)) {
         if (!value) {
@@ -87,9 +94,7 @@ function validate(form, args, messages = {}) {
                     wildcard.key = '.*' + wildcard.key.substring(1);
                 }
 
-                wildcard.key.replace(/\./, '.');
-
-                if (RegExp(`^${wildcard.key}`).test(key)) {
+                if (RegExp(`^${wildcard.key.replace(/\./g, '\\.').replace(/\*/g, '+')}`).test(key)) {
                     if (args[key]) {
                         args[key] = `${wildcard.value}|${args[key]}`;
                     } else {
