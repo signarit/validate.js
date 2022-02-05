@@ -1,0 +1,22 @@
+{
+  "name": "@mikkjal/validate.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikkjal/validate.js.git"
+  },
+  "browser": {
+    "./index.js": "./src/index.js"
+  },
+  "author": "mikkjal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mikkjal/validate.js/issues"
+  },
+  "homepage": "https://github.com/mikkjal/validate.js#readme"
+}
