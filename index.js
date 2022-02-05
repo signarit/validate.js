@@ -169,6 +169,32 @@ function flatten(object, pre = '') {
     return flatObject;
 }
 
+function roughen(flatObject) {
+    let object = {};
+
+    for (let [key, value] of Object.entries(flatObject)) {
+        let innerObject = {};
+
+        const keys = key.split('.');
+
+        keys.reduce((obj, i, currentIndex) => {
+            if (currentIndex == keys.length - 1) {
+                obj[i] = value;
+
+                return;
+            }
+
+            obj[i] = {};
+
+            return obj[i];
+        }, innerObject);
+
+        object = { ...object, ...innerObject };
+    }
+
+    return object;
+}
+
 /**
  * Validate a form.
  * @param {*} object
@@ -277,7 +303,7 @@ function validator(form, args, messages = {}) {
         }
     }
 
-    return validator;
+    return roughen(validator);
 }
 
 module.exports = validator;
