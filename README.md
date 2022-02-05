@@ -1,3 +1,3 @@
-# validator.js
+# validate.js
 
 Documentation goes here.
