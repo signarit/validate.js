@@ -244,8 +244,6 @@ function validate(form, args, messages = {}) {
         }
     }
 
-    console.log('args', args);
-
     // all objects
     for (let [key, ruleList] of Object.entries(args)) {
         // "valid" is a reserved keyword
