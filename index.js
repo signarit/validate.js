@@ -1,6 +1,6 @@
 'use strict';
 
-let rules = {
+const rules = {
     required({ value }) {
         return !!value;
     },
@@ -169,6 +169,11 @@ function flatten(object, pre = '') {
     return flatObject;
 }
 
+/**
+ * Roughen a flat object.
+ * @param {*} flatObject
+ * @returns
+ */
 function roughen(flatObject) {
     let object = {};
 
@@ -245,8 +250,6 @@ function validate(form, args, messages = {}) {
             delete args[key];
         }
     }
-
-    console.log('args', args);
 
     // all objects
     for (let [key, ruleList] of Object.entries(args)) {
