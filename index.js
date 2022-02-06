@@ -73,11 +73,23 @@ const rules = {
         return /\b(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b/gi.test(value);
     },
 
+    mac_address({ value }) {
+        return /(([0-9A-Fa-f]{2}[-:]){5}[0-9A-Fa-f]{2})|(([0-9A-Fa-f]{4}\.){2}[0-9A-Fa-f]{4})/gi.test(value);
+    },
+
     max({ value, args }) {
+        if (!isNaN(value)) {
+            return Number(value) <= Number(args);
+        }
+
         return value.length <= Number(args);
     },
 
     min({ value, args }) {
+        if (!isNaN(value)) {
+            return Number(value) >= Number(args);
+        }
+
         return value.length >= Number(args);
     },
 
@@ -85,8 +97,12 @@ const rules = {
         return !this.in(options);
     },
 
+    not_regex(options) {
+        return !this.regex(options);
+    },
+
     numeric({ value }) {
-        return !isNaN(value);
+        return /^[0-9]+$/.test(value);
     },
 
     regex({ value, args }) {
@@ -149,6 +165,10 @@ const rules = {
 
     url({ value }) {
         return /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi.test(value);
+    },
+
+    uuid({ value }) {
+        return /[0-9A-Za-z]{8}-[0-9A-Za-z]{4}-4[0-9A-Za-z]{3}-[89ABab][0-9A-Za-z]{3}-[0-9A-Za-z]{12}/g.test(value);
     },
 };
 
@@ -311,7 +331,9 @@ function validate(form, args, messages = {}) {
 
             if (!isValid) {
                 // if any of the objects are invalid, so is the object
-                object.valid = false;
+                if (value || rule.includes('required')) {
+                    object.valid = false;
+                }
 
                 // add the first invalid message
                 if (messages[`${key}.${rule}${increment}`]) {
