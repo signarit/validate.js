@@ -22,9 +22,11 @@ A simple, Laravelian, way to validate JavaScript forms.
     - [hex](#hex)
     - [in](#in)
     - [ip](#ip)
+    - [mac_address](#mac_address)
     - [max](#max)
     - [min](#min)
     - [not_in](#not_in)
+    - [not_regex](#not_regex)
     - [numeric](#numeric)
     - [regex](#regex)
     - [required](#required)
@@ -35,6 +37,7 @@ A simple, Laravelian, way to validate JavaScript forms.
     - [same](#same)
     - [starts_with](#starts_with)
     - [url](#url)
+    - [uuid](#uuid)
 
 ## Installation
 
@@ -331,6 +334,14 @@ const rules = {
 ```js
 const rules = {
     name: 'not_in:mikkjal,signar',
+};
+```
+
+### not_regex
+
+```js
+const rules = {
+    not_a_number: 'not_regex:/^[0-9]$/',
 };
 ```
 
