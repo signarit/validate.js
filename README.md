@@ -302,11 +302,19 @@ const rules = {
 };
 ```
 
+### mac_address
+
+```js
+const rules = {
+    mac_address: 'mac_address',
+};
+```
+
 ### max
 
 ```js
 const rules = {
-    age: 'max:122',
+    password: 'max:16',
 };
 ```
 
@@ -314,7 +322,7 @@ const rules = {
 
 ```js
 const rules = {
-    age: 'min:18',
+    password: 'min:8',
 };
 ```
 
@@ -403,5 +411,13 @@ const rules = {
 ```js
 const rules = {
     url: 'url',
+};
+```
+
+### uuid
+
+```js
+const rules = {
+    uuid: 'uuid',
 };
 ```
