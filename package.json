@@ -1,6 +1,6 @@
 {
   "name": "@mikkjal/validate.js",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Validate forms in javascript.",
   "keywords": [
     "javascript",
@@ -12,7 +12,8 @@
   ],
   "main": "index.js",
   "scripts": {
-    "build": "npx rollup -c"
+    "build": "npx rollup -c",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -26,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/mikkjal/validate.js/issues"
   },
-  "homepage": "https://github.com/mikkjal/validate.js#readme"
+  "homepage": "https://github.com/mikkjal/validate.js#readme",
+  "devDependencies": {
+    "mocha": "^9.2.0"
+  }
 }
