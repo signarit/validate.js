@@ -24,17 +24,13 @@ const rules = {
     between({ value, args }) {
         const [min, max] = args.split(',');
 
-        if (isNaN(value)) {
-            return false;
+        if (!isNaN(value)) {
+            value = Number(value);
+
+            return value >= Number(min) && value <= Number(max);
         }
 
-        value = Number(value);
-
-        if (value < min || value > max) {
-            return false;
-        }
-
-        return true;
+        return value.length >= Number(min) && value.length <= Number(max);
     },
 
     confirmed({ value, form, key }) {

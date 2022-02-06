@@ -60,4 +60,20 @@ describe('rules', function () {
 
         assert.equal($v.valid, true);
     });
+
+    it('should not fail when using between for number, string or array', function () {
+        const form = {
+            test: {
+                number: 3,
+                string: 'Hello, world!',
+                array: ['Hello', ', ', 'world', '!'],
+            },
+        };
+
+        const $v = validate(form, {
+            'test.*': 'required|between:3,13',
+        });
+
+        assert.equal($v.valid, true);
+    });
 });
