@@ -159,7 +159,9 @@ function validate(form, args, messages = {}) {
 
             if (!isValid) {
                 // if any of the objects are invalid, so is the object
-                object.valid = false;
+                if (value || rule.includes('required')) {
+                    object.valid = false;
+                }
 
                 // add the first invalid message
                 if (messages[`${key}.${rule}${increment}`]) {
