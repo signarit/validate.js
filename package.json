@@ -1,7 +1,7 @@
 {
   "name": "@mikkjal/validate.js",
-  "version": "1.0.8",
-  "description": "Validate forms in javascript.",
+  "version": "1.0.9",
+  "description": "A simple, Laravelian, way to validate JavaScript forms.",
   "keywords": [
     "javascript",
     "validate",
@@ -12,6 +12,7 @@
   ],
   "main": "index.js",
   "scripts": {
+    "dev": "npx rollup -c --watch",
     "build": "npx rollup -c",
     "test": "mocha"
   },

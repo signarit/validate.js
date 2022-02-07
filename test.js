@@ -76,4 +76,44 @@ describe('rules', function () {
 
         assert.equal($v.valid, true);
     });
+
+    it('should not fail when using regex', function () {
+        const form = {
+            number: '9',
+        };
+
+        const $v = validate(form, {
+            number: 'regex:/^[0-9]$/|regex:^[0-9]$',
+        });
+
+        assert.deepEqual([$v.number.regex, $v.number.regex1], [true, true]);
+    });
+
+    it('should add wildcard messages', function () {
+        const form = {
+            test: {
+                name: '',
+                email: '',
+            },
+            email: '',
+        };
+
+        const $v = validate(
+            form,
+            {
+                'test.*': 'required',
+                '*email': 'email',
+            },
+            {
+                'test.*.required': 'Name is required',
+                '*email.email': 'Email needs to be an email address',
+            }
+        );
+
+        assert.ok(
+            $v.email.messages.includes('Email needs to be an email address') &&
+                $v.test.name.messages.includes('Name is required') &&
+                $v.test.email.messages.includes('Email needs to be an email address')
+        );
+    });
 });

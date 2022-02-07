@@ -72,42 +72,86 @@ function validate(form, args, messages = {}) {
     // add non-existing objects to the form
     for (const [key] of Object.entries(args)) {
         if (!Object.keys(form).includes(key)) {
+            if (key.includes('*')) {
+                continue;
+            }
+
             form[key] = '';
         }
     }
 
-    // add wildcard character where matching
+    // add wildcard rules
     for (const [key, value] of Object.entries(args)) {
         if (!value) {
             continue;
         }
 
-        if (key.includes('*')) {
-            const wildcard = { key, value };
+        if (!key.includes('*')) {
+            continue;
+        }
 
-            for (const [key, value] of Object.entries(form)) {
-                if (key == wildcard.key) {
-                    continue;
-                }
+        const wildcard = { key, value };
 
-                if (/^\*/.test(wildcard.key)) {
-                    wildcard.key = '.*' + wildcard.key.substring(1);
-                }
-
-                if (RegExp(`^${wildcard.key.replace(/\./g, '\\.').replace(/\*/g, '+')}`).test(key)) {
-                    if (args[key]) {
-                        args[key] = `${wildcard.value}|${args[key]}`;
-                    } else {
-                        args[key] = wildcard.value;
-                    }
-                }
+        for (const [key] of Object.entries(form)) {
+            if (key == wildcard.key) {
+                continue;
             }
 
-            delete args[key];
+            let prepend = '';
+
+            if (/^\*/.test(wildcard.key)) {
+                prepend = '.';
+            }
+
+            const regex = RegExp(`^${prepend}${wildcard.key.replace(/\.\*/, '\\.+')}`);
+
+            if (regex.test(key)) {
+                if (args[key]) {
+                    args[key] = `${args[key]}|${wildcard.value}`;
+                } else {
+                    args[key] = wildcard.value;
+                }
+            }
         }
+
+        delete args[key];
     }
 
-    // all objects
+    // add wildcard messages
+    for (const [key, value] of Object.entries(messages)) {
+        if (!value) {
+            continue;
+        }
+
+        if (!key.includes('*')) {
+            continue;
+        }
+
+        const wildcard = { key, value };
+
+        for (const [key] of Object.entries(form)) {
+            if (key == wildcard.key) {
+                continue;
+            }
+
+            let prepend = '';
+
+            if (/^\*/.test(wildcard.key)) {
+                prepend = '.';
+            }
+
+            const rule = wildcard.key.substring(wildcard.key.lastIndexOf('.') + 1);
+
+            const regex = RegExp(`^${prepend}${wildcard.key.substring(0, wildcard.key.lastIndexOf('.')).replace(/\.\*/, '\\.+')}`);
+
+            if (regex.test(key)) {
+                messages[`${key}.${rule}`] = wildcard.value;
+            }
+        }
+
+        delete messages[key];
+    }
+
     for (let [key, ruleList] of Object.entries(args)) {
         // "valid" is a reserved keyword
         if (!key || key == 'valid') {

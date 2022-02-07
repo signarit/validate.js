@@ -175,15 +175,20 @@ const form = {
     email: 'test@example.com',
     password: 'Test123',
     password_confirmation: '',
+    work: {
+        email: '',
+    },
 };
 
 const rules = {
-    email: 'required|email',
+    email: 'required',
     password: 'required|min:8|confirmed',
+    '*email': 'email',
 };
 
 const messages = {
     'email.required': 'Email address is required',
+    '*email.email': 'Not a valid email address',
     'password.min': 'The password needs to be at least 8 characters',
     'password.confirmed': 'The passwords do not match',
 };
@@ -317,6 +322,7 @@ const rules = {
 
 ```js
 const rules = {
+    age: 'max:122',
     password: 'max:16',
 };
 ```
@@ -325,6 +331,7 @@ const rules = {
 
 ```js
 const rules = {
+    age: 'min:18',
     password: 'min:8',
 };
 ```
